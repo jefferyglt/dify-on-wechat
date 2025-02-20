@@ -13,10 +13,10 @@ from voice.factory import create_voice
 class Bridge(object):
     def __init__(self):
         self.btype = {
-            "chat": const.CHATGPT,
-            "voice_to_text": conf().get("voice_to_text", "openai"),
-            "text_to_voice": conf().get("text_to_voice", "google"),
-            "translate": conf().get("translate", "baidu"),
+            "chat": const.ZHIPU_AI,
+            # "voice_to_text": conf().get("voice_to_text", "openai"),
+            # "text_to_voice": conf().get("text_to_voice", "google"),
+            # "translate": conf().get("translate", "baidu"),
         }
 
         # 这边取配置的模型
@@ -24,45 +24,9 @@ class Bridge(object):
         if bot_type:
             self.btype["chat"] = bot_type
         else:
-            model_type = conf().get("model") or const.GPT35
-            if model_type in ["text-davinci-003"]:
-                self.btype["chat"] = const.OPEN_AI
-            if conf().get("use_azure_chatgpt", False):
-                self.btype["chat"] = const.CHATGPTONAZURE
-            if model_type in ["wenxin", "wenxin-4"]:
-                self.btype["chat"] = const.BAIDU
-            if model_type in ["xunfei"]:
-                self.btype["chat"] = const.XUNFEI
-            if model_type in [const.QWEN]:
-                self.btype["chat"] = const.QWEN
-            if model_type in [const.QWEN_TURBO, const.QWEN_PLUS, const.QWEN_MAX]:
-                self.btype["chat"] = const.QWEN_DASHSCOPE
-            if model_type and model_type.startswith("gemini"):
-                self.btype["chat"] = const.GEMINI
-            if model_type in [const.DIFY]:
-                self.btype["chat"] = const.DIFY
-            if model_type and model_type.startswith("glm"):
+            model_type = conf().get("model")  # 从配置文件获取模型类型
+            if model_type == "ChatGLM":
                 self.btype["chat"] = const.ZHIPU_AI
-            if model_type in [const.COZE]:
-                self.btype["chat"] = const.COZE
-            if model_type and model_type.startswith("claude-3"):
-                self.btype["chat"] = const.CLAUDEAPI
-
-            if model_type in ["claude"]:
-                self.btype["chat"] = const.CLAUDEAI
-
-            if model_type in [const.MOONSHOT, "moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"]:
-                self.btype["chat"] = const.MOONSHOT
-
-            if model_type in ["abab6.5-chat"]:
-                self.btype["chat"] = const.MiniMax
-            
-            if conf().get("use_linkai") and conf().get("linkai_api_key"):
-                self.btype["chat"] = const.LINKAI
-                if not conf().get("voice_to_text") or conf().get("voice_to_text") in ["openai"]:
-                    self.btype["voice_to_text"] = const.LINKAI
-                if not conf().get("text_to_voice") or conf().get("text_to_voice") in ["openai", const.TTS_1, const.TTS_1_HD]:
-                    self.btype["text_to_voice"] = const.LINKAI
 
         self.bots = {}
         self.chat_bots = {}
