@@ -227,8 +227,18 @@ class Query:
 
         # 忽略来自自己的消息
         if gewechat_msg.my_msg:
-            logger.debug(f"[gewechat] ignore message from myself: {gewechat_msg.actual_user_id}: {gewechat_msg.content}")
+            context = channel._compose_context(
+            gewechat_msg.ctype,
+            gewechat_msg.content,
+            isgroup=gewechat_msg.is_group,
+            msg=gewechat_msg,
+        )
+            if context:
+                channel.produce(context)
             return "success"
+
+            # logger.debug(f"[gewechat] ignore message from myself: {gewechat_msg.actual_user_id}: {gewechat_msg.content}")
+            # return "success"
 
         # 忽略过期的消息
         if int(gewechat_msg.create_time) < int(time.time()) - 60 * 5: # 跳过5分钟前的历史消息
